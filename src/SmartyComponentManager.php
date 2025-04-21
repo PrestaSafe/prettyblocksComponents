@@ -67,6 +67,25 @@ class SmartyComponentManager
         if ($handler === null) {
             $handler = $this->createDefaultHandler($name, $templateFile);
         }
+        // If handler is provided but is not a wrapper for extractSlotContent,
+        // wrap it to ensure slots are extracted
+        else if (is_callable($handler)) {
+            $originalHandler = $handler;
+            $handler = function($params, $content, $template, &$repeat) use ($originalHandler) {
+                if (!$repeat && $content !== null) {
+                    // Extract slots content
+                    $slotsContent = $this->extractSlotsContent($content);
+                    
+                    // Assign slot contents to Smarty variables
+                    foreach ($slotsContent as $slotName => $slotContent) {
+                        $template->assign($slotName, $slotContent);
+                    }
+                }
+                
+                // Call the original handler
+                return $originalHandler($params, $content, $template, $repeat);
+            };
+        }
         
         // Register the plugin in Smarty
         $this->smarty->registerPlugin('block', $name, $handler);
@@ -97,6 +116,21 @@ class SmartyComponentManager
             $template->assign('content', $content);
             
             if (!$repeat && $content !== null) {
+                // Extract slots content
+                $slotsContent = $this->extractSlotsContent($content);
+                
+                // Assign props if provided
+                $props = null;
+                if(isset($params['props'])){
+                    $props = $params['props'];
+                }
+                $template->assign('props', $props);
+                
+                // Assign slot contents to Smarty variables
+                foreach ($slotsContent as $slotName => $slotContent) {
+                    $template->assign($slotName, $slotContent);
+                }
+                
                 return $template->fetch($templatePath);
             }
             
@@ -112,23 +146,11 @@ class SmartyComponentManager
     public function registerCardComponent()
     {
         $handler = function($params, $content, $template, &$repeat) {
-            $props = null;
             if (is_null($content)) {
                 // Return nothing when opening the tag
                 return;
             }
             if (!$repeat && $content !== null) {
-                // Extract slots content
-                $slotsContent = $this->extractSlotsContent($content);
-                if(isset($params['props'])){
-                    $props = $params['props'];
-                }
-                $template->assign('props', $props);
-                // Assign slot contents to Smarty variables
-                foreach ($slotsContent as $slotName => $slotContent) {
-                    $template->assign($slotName, $slotContent);
-                }
-                
                 // Render the 'card.tpl' template
                 return $template->fetch($this->componentsDir . '/card.tpl');
             }
