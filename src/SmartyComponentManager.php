@@ -1,33 +1,51 @@
 <?php
+/**
+ * Copyright since 2023 SmartyComponents
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/MIT
+ *
+ * @author    SmartyComponents <info@example.com>
+ * @copyright Since 2023 SmartyComponents
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
+
+declare(strict_types=1);
+
+namespace SmartyComponents;
 
 /**
- * SmartyComponentManager - Gestionnaire de composants pour Smarty
+ * SmartyComponentManager - Component manager for Smarty
  * 
- * Cette classe permet de gérer facilement l'enregistrement des composants Smarty
- * et d'alléger le code dans le fichier principal.
+ * This class makes it easy to manage Smarty components registration
+ * and simplify code in the main file.
  */
 class SmartyComponentManager
 {
     /**
-     * @var \Smarty L'instance de Smarty
+     * @var \Smarty The Smarty instance
      */
     private $smarty;
     
     /**
-     * @var array Les composants enregistrés
+     * @var array The registered components
      */
     private $components = [];
     
     /**
-     * @var string Le chemin vers le dossier des templates des composants
+     * @var string The path to the components templates directory
      */
     private $componentsDir;
     
     /**
-     * Constructeur
+     * Constructor
      * 
-     * @param \Smarty $smarty L'instance de Smarty
-     * @param string $componentsDir Le chemin vers le dossier des templates des composants
+     * @param \Smarty $smarty The Smarty instance
+     * @param string $componentsDir The path to the components templates directory
      */
     public function __construct(\Smarty $smarty, $componentsDir = 'components')
     {
@@ -36,24 +54,24 @@ class SmartyComponentManager
     }
     
     /**
-     * Enregistre un composant
+     * Register a component
      * 
-     * @param string $name Le nom du composant
-     * @param string|callable $handler Le handler du composant ou null pour utiliser le handler par défaut
-     * @param string|null $templateFile Le fichier template à utiliser ou null pour utiliser le nom du composant
+     * @param string $name The component name
+     * @param string|callable $handler The component handler or null to use the default handler
+     * @param string|null $templateFile The template file to use or null to use the component name
      * @return $this
      */
     public function register($name, $handler = null, $templateFile = null)
     {
-        // Si aucun handler n'est fourni, on crée un handler par défaut
+        // If no handler is provided, create a default handler
         if ($handler === null) {
             $handler = $this->createDefaultHandler($name, $templateFile);
         }
         
-        // Enregistre le plugin dans Smarty
+        // Register the plugin in Smarty
         $this->smarty->registerPlugin('block', $name, $handler);
         
-        // Stocke le composant dans la liste
+        // Store the component in the list
         $this->components[$name] = [
             'handler' => $handler,
             'template' => $templateFile ?: $name . '.tpl'
@@ -63,11 +81,11 @@ class SmartyComponentManager
     }
     
     /**
-     * Crée un handler par défaut pour un composant
+     * Create a default handler for a component
      * 
-     * @param string $name Le nom du composant
-     * @param string|null $templateFile Le fichier template à utiliser ou null pour utiliser le nom du composant
-     * @return callable Le handler
+     * @param string $name The component name
+     * @param string|null $templateFile The template file to use or null to use the component name
+     * @return callable The handler
      */
     private function createDefaultHandler($name, $templateFile = null)
     {
@@ -87,7 +105,7 @@ class SmartyComponentManager
     }
     
     /**
-     * Enregistre le composant "card"
+     * Register the "card" component
      * 
      * @return $this
      */
@@ -100,19 +118,19 @@ class SmartyComponentManager
                 return;
             }
             if (!$repeat && $content !== null) {
-                // Extrait le contenu des slots
+                // Extract slots content
                 $slotsContent = $this->extractSlotsContent($content);
                 if(isset($params['props'])){
                     $props = $params['props'];
                 }
                 $template->assign('props', $props);
-                // Assignation des contenus des slots aux variables Smarty
+                // Assign slot contents to Smarty variables
                 foreach ($slotsContent as $slotName => $slotContent) {
                     $template->assign($slotName, $slotContent);
                 }
                 
-                // Rendu du template 'card.tpl'
-                return $template->fetch('components/card.tpl');
+                // Render the 'card.tpl' template
+                return $template->fetch($this->componentsDir . '/card.tpl');
             }
         };
         
@@ -120,45 +138,45 @@ class SmartyComponentManager
     }
     
     /**
-     * Enregistre le composant "slot"
+     * Register the "slot" component
      * 
      * @return $this
      */
     public function registerSlotComponent()
     {
         $handler = function($params, $content, $template, &$repeat) {
-            // Vérifiez si le contenu est null, ce qui signifie que nous sommes à l'ouverture du bloc
+            // Check if content is null, which means we're at the opening of the block
             if ($content === null) {
                 return;
             }
             
-            // Récupère le nom du slot depuis les paramètres
+            // Get slot name from parameters
             $name = isset($params['name']) ? strtoupper($params['name']) : 'DEFAULT';
             // Assign the slot name to a Smarty variable
             $template->assign('name', $name);
             $template->assign('content', $content);
-            // Retourne le contenu encadré par les marqueurs de slot
-            return $template->fetch('components/slot.tpl');
+            // Return the content surrounded by slot markers
+            return $template->fetch($this->componentsDir . '/slot.tpl');
         };
         
         return $this->register('slot', $handler);
     }
     
     /**
-     * Extrait le contenu des slots
+     * Extract slots content
      * 
-     * @param string $content Le contenu à analyser
-     * @return array Les contenus des slots
+     * @param string $content The content to parse
+     * @return array The slots contents
      */
     private function extractSlotsContent($content)
     {
         $slotsContent = [];
         
-        // Utilise une expression régulière pour trouver tous les slots
+        // Use a regular expression to find all slots
         preg_match_all("/<!-- SLOT_(.*?) -->(.*?)<!-- END_SLOT_\\1 -->/s", $content, $matches, PREG_SET_ORDER);
         
         foreach ($matches as $match) {
-            // $match[1] contient le nom du slot, et $match[2] contient le contenu du slot
+            // $match[1] contains the slot name, and $match[2] contains the slot content
             $slotsContent[strtolower($match[1])] = $match[2];
         }
         
@@ -166,9 +184,9 @@ class SmartyComponentManager
     }
     
     /**
-     * Vérifie si un composant est enregistré
+     * Check if a component is registered
      * 
-     * @param string $name Le nom du composant
+     * @param string $name The component name
      * @return bool
      */
     public function hasComponent($name)
@@ -177,12 +195,50 @@ class SmartyComponentManager
     }
     
     /**
-     * Récupère tous les composants enregistrés
+     * Get all registered components
      * 
      * @return array
      */
     public function getComponents()
     {
         return $this->components;
+    }
+    
+    /**
+     * Set custom components directory
+     * 
+     * @param string $componentsDir The path to the components templates directory
+     * @return $this
+     */
+    public function setComponentsDir($componentsDir)
+    {
+        $this->componentsDir = $componentsDir;
+        return $this;
+    }
+    
+    /**
+     * Get components directory
+     * 
+     * @return string
+     */
+    public function getComponentsDir()
+    {
+        return $this->componentsDir;
+    }
+    
+    /**
+     * Bulk register components
+     * 
+     * @param array $components Array of component configuration
+     * @return $this
+     */
+    public function registerComponents(array $components)
+    {
+        foreach ($components as $name => $config) {
+            $handler = $config['handler'] ?? null;
+            $template = $config['template'] ?? null;
+            $this->register($name, $handler, $template);
+        }
+        return $this;
     }
 } 
