@@ -1,5 +1,5 @@
 {
-    "name": "smarty-components/core",
+    "name": "prestasafe-smarty-components/core",
     "description": "Système de composants Smarty inspiré de Vue.js avec AlpineJS, compatible avec PrestaShop",
     "type": "library",
     "license": "MIT",
