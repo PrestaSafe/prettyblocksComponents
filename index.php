@@ -18,8 +18,12 @@ if (!class_exists('\Smarty')) {
     die('Smarty n\'est pas installé. Veuillez installer les dépendances avec Composer: <code>composer install</code>');
 }
 
-// Chargement du SmartyComponentManager
-require_once __DIR__ . '/src/SmartyComponentManager.php';
+// Utilisation du namespace pour SmartyComponentManager
+use SmartyComponents\SmartyComponentManager;
+use SmartyComponents\Factory;
+
+// Le require_once n'est plus nécessaire car l'autoloader se charge de charger la classe
+// require_once __DIR__ . '/src/SmartyComponentManager.php';
 
 // IMPORTANT: Créer une nouvelle instance complètement propre de Smarty
 // Cela évite les problèmes de plugins déjà enregistrés
@@ -35,7 +39,11 @@ $smarty->setCacheDir(__DIR__ . '/src/cache');
 $smarty->setConfigDir(__DIR__ . '/src/configs');
 
 // Initialisation du gestionnaire de composants
+// Option 1: Utiliser directement la classe
 $componentManager = new SmartyComponentManager($smarty, 'components');
+
+// Option 2: Utiliser la factory (alternative)
+// $componentManager = Factory::create($smarty, 'components');
 
 // Enregistrement des composants
 $componentManager->registerCardComponent();

@@ -1,18 +1,55 @@
 # SmartyComponents
 
-Un gestionnaire de composants pour Smarty qui simplifie la création et l'utilisation de composants réutilisables dans vos templates, avec un style moderne utilisant Tailwind CSS v4.
+Un gestionnaire de composants pour Smarty qui simplifie la création et l'utilisation de composants réutilisables dans vos templates, avec un style moderne utilisant Tailwind CSS v4. Compatible avec PrestaShop.
 
 ## Installation
 
 1. Installez les dépendances avec Composer :
 ```bash
-composer install
+composer require smarty-components/core
 ```
 
-2. Lancez le serveur de développement :
+2. Pour un projet standard :
 ```bash
 php -S localhost:8000
 ```
+
+## Compatibilité PrestaShop
+
+SmartyComponents est conçu pour fonctionner parfaitement dans un module PrestaShop. Il offre des fonctionnalités spécifiques pour faciliter l'intégration :
+
+- Support de Smarty 3.1+ (utilisé par PrestaShop 1.7+) et Smarty 4.3+
+- Factory spécifique pour les modules PrestaShop avec détection automatique des chemins
+- Composants de base compatibles avec le design PrestaShop
+
+### Utilisation dans un module PrestaShop
+
+1. Ajoutez la dépendance dans votre fichier `composer.json` de votre module :
+```json
+{
+    "require": {
+        "smarty-components/core": "^1.0"
+    }
+}
+```
+
+2. Dans votre fichier principal de module, initialisez le gestionnaire de composants avec la méthode factory :
+
+```php
+// Dans une méthode hook ou un controller
+$smarty = $this->context->smarty;
+$componentManager = \SmartyComponents\Factory::createForPrestaShop($smarty, $this->name);
+
+// Enregistrez les composants que vous souhaitez utiliser
+$componentManager->registerCardComponent();
+$componentManager->registerSlotComponent();
+$componentManager->register('button');
+$componentManager->register('alert');
+```
+
+3. Créez les templates de composants dans le dossier `views/templates/components/` de votre module.
+
+4. Utilisez-les dans vos templates Smarty comme dans l'exemple ci-dessous.
 
 ## Utilisation du SmartyComponentManager
 
@@ -28,7 +65,13 @@ $smarty = new \Smarty();
 // ...
 
 // Initialisation du gestionnaire de composants
-$componentManager = new SmartyComponentManager($smarty, 'components');
+$componentManager = new \SmartyComponents\SmartyComponentManager($smarty, 'components');
+
+// OU avec la Factory
+$componentManager = \SmartyComponents\Factory::create($smarty, 'components');
+
+// OU avec des composants préenregistrés
+$componentManager = \SmartyComponents\Factory::createWithCommonComponents($smarty);
 ```
 
 ### Enregistrement d'un composant simple
@@ -71,7 +114,7 @@ $componentManager->registerSlotComponent();
 
 ## Création de templates de composants avec Tailwind CSS v4
 
-Pour chaque composant, créez un fichier template dans le dossier `src/templates/components/` avec le nom du composant, par exemple `button.tpl` :
+Pour chaque composant, créez un fichier template dans le dossier `components/` (ou celui spécifié lors de l'initialisation) avec le nom du composant, par exemple `button.tpl` :
 
 ```smarty
 {* button.tpl *}
@@ -127,4 +170,8 @@ Vous pouvez personnaliser n'importe quel composant en passant des classes suppl�
 
 ## Étendre le gestionnaire
 
-Vous pouvez étendre la classe `SmartyComponentManager` pour ajouter vos propres méthodes pour des composants spécifiques à votre application. 
+Vous pouvez étendre la classe `SmartyComponentManager` pour ajouter vos propres méthodes pour des composants spécifiques à votre application ou module PrestaShop.
+
+## Exemples
+
+Consultez le dossier `docs/example-module/` pour un exemple complet d'utilisation dans un module PrestaShop. 
