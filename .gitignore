@@ -8,3 +8,4 @@
 /demo/configs/
 .DS_Store
 *.log 
+src/cache/*
