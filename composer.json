@@ -1,0 +1,23 @@
+{
+    "name": "smarty-components/core",
+    "description": "Système de composants Smarty inspiré de Vue.js avec AlpineJS",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Author",
+            "email": "info@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "smarty/smarty": "^4.3",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "SmartyComponents\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+} 

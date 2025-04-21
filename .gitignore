@@ -1,0 +1,10 @@
+/vendor/
+/composer.lock
+/example/templates_c/
+/example/cache/
+/example/configs/
+/demo/templates_c/
+/demo/cache/
+/demo/configs/
+.DS_Store
+*.log 
