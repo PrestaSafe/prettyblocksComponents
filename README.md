@@ -6,7 +6,7 @@ Un gestionnaire de composants pour Smarty qui simplifie la création et l'utilis
 
 1. Installez les dépendances avec Composer :
 ```bash
-composer require smarty-components/core
+composer require prestasafe-smarty-components/core
 ```
 
 2. Pour un projet standard :
