@@ -53,6 +53,7 @@ $componentManager->registerSlotComponent();
 $componentManager->register('button', function($params, $content, $template, &$repeat) {
     $template->assign('params', $params);
     $template->assign('content', $content);
+    
     if (!$repeat && $content !== null) {
         return $template->fetch('components/button.tpl');
     }

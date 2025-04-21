@@ -1,5 +1,12 @@
 {** card.tpl **}
-<div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden" {if isset($props)}{$props nofilter}{/if}>
+<div 
+    class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden" 
+    {if isset($props) && is_array($props)}
+        {foreach $props as $attr => $value}
+            {$attr}="{$value}"
+        {/foreach}
+    {/if}
+>
     <div class="p-5">
         {if isset($title)}
             <div class="mb-4 text-xl font-bold tracking-tight text-gray-900">

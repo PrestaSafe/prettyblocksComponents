@@ -80,11 +80,21 @@ class SmartyComponentManager
                     // Extract slots content
                     $slotsContent = $this->extractSlotsContent($content);
                     
-                    // Assign props if provided
-                    $props = null;
-                    if(isset($params['props'])){
+                    // Handle component props
+                    $props = [];
+                    if(isset($params['props']) && is_array($params['props'])) {
                         $props = $params['props'];
+                        // Remove props from params to avoid duplication
+                        unset($params['props']);
                     }
+                    
+                    // Merge direct params (except props) with props array
+                    foreach($params as $key => $value) {
+                        if($key !== 'props') {
+                            $props[$key] = $value;
+                        }
+                    }
+                    
                     $template->assign('props', $props);
                     
                     // Assign slot contents to Smarty variables
@@ -130,11 +140,21 @@ class SmartyComponentManager
                 // Extract slots content
                 $slotsContent = $this->extractSlotsContent($content);
                 
-                // Assign props if provided
-                $props = null;
-                if(isset($params['props'])){
+                // Handle component props
+                $props = [];
+                if(isset($params['props']) && is_array($params['props'])) {
                     $props = $params['props'];
+                    // Remove props from params to avoid duplication
+                    unset($params['props']);
                 }
+                
+                // Merge direct params (except props) with props array
+                foreach($params as $key => $value) {
+                    if($key !== 'props') {
+                        $props[$key] = $value;
+                    }
+                }
+                
                 $template->assign('props', $props);
                 
                 // Assign slot contents to Smarty variables

@@ -13,15 +13,21 @@
             
             <section class="mb-10">
                 <h2 class="text-2xl font-semibold text-gray-800 mb-4">Card Component</h2>
-                {card props="x-data='{ show: false, count: 0 }'"}
+                {card props=[
+                    'x-data' => '{ show: false, count: 0 }'
+                ]}
                     {slot name="title"}<h3>Card avec Tailwind CSS</h3>{/slot}
                     {slot name="card_content"}
                         <p class="mb-4">Ce composant utilise maintenant Tailwind CSS v4 pour le style.</p>
-                        {button props='x-on:click="show = true"'} Show dynamic content {/button}
+                        {button props=[
+                            'x-on:click' => 'show = true'
+                        ]} Show dynamic content {/button}
                         <div x-show="show" x-transition>
                             <p>Dynamic content</p>
                         </div>
-                        {button props='x-on:click="count++"'} Incrementer <span x-text="count"></span>{/button}
+                        {button props=[
+                            'x-on:click' => 'count++'
+                        ]} Incrementer <span x-text="count"></span>{/button}
 
                     {/slot}
                 {/card}
@@ -34,6 +40,32 @@
                     {button class="bg-green-500 hover:bg-green-600"} Bouton vert {/button}
                     {button class="bg-red-500 hover:bg-red-600"} Bouton rouge {/button}
                     {button class="bg-purple-500 hover:bg-purple-600"} Bouton violet {/button}
+                </div>
+            </section>
+            
+            <section class="mb-10">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Advanced Button Component</h2>
+                <div class="space-y-4">
+                    <p class="text-gray-700">Boutons avec icônes, libellés et propriétés Alpine.js:</p>
+                    
+                    {button 
+                        icon="<svg class='w-5 h-5' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z' clip-rule='evenodd'></path></svg>"
+                        label="Mon bouton" 
+                        props=[
+                            'x-data' => '{ message: "I ❤️ Alpine" }',
+                            '@click' => 'alert(message)',
+                            'class' => 'p-2'
+                        ]
+                    }
+                        Avec <span x-text="message"></span>
+                    {/button}
+                    
+                    {button 
+                        icon="<svg class='w-5 h-5' fill='currentColor' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L9 11.414V15a1 1 0 102 0v-3.586l1.293 1.293a1 1 0 001.414-1.414l-3-3z' clip-rule='evenodd'></path></svg>"
+                        label="Bouton avec icône" 
+                        class="bg-green-500 hover:bg-green-600"
+                    }
+                    {/button}
                 </div>
             </section>
             
