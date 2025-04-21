@@ -1,30 +1,30 @@
 # SmartyComponents
 
-Un gestionnaire de composants pour Smarty qui simplifie la création et l'utilisation de composants réutilisables dans vos templates, avec un style moderne utilisant Tailwind CSS v4. Compatible avec PrestaShop.
+A component manager for Smarty that simplifies the creation and use of reusable components in your templates, with a modern style using Tailwind CSS v4. Compatible with PrestaShop.
 
 ## Installation
 
-1. Installez les dépendances avec Composer :
+1. Install dependencies with Composer:
 ```bash
 composer require prestasafe-smarty-components/core
 ```
 
-2. Pour un projet standard :
+2. For a standard project:
 ```bash
 php -S localhost:8000
 ```
 
-## Compatibilité PrestaShop
+## PrestaShop Compatibility
 
-SmartyComponents est conçu pour fonctionner parfaitement dans un module PrestaShop. Il offre des fonctionnalités spécifiques pour faciliter l'intégration :
+SmartyComponents is designed to work perfectly with a PrestaShop module. It offers specific features to facilitate integration:
 
-- Support de Smarty 3.1+ (utilisé par PrestaShop 1.7+) et Smarty 4.3+
-- Factory spécifique pour les modules PrestaShop avec détection automatique des chemins
-- Composants de base compatibles avec le design PrestaShop
+- Support for Smarty 3.1+ (used by PrestaShop 1.7+) and Smarty 4.3+
+- Specific factory for PrestaShop modules with automatic path detection
+- Basic components compatible with PrestaShop design
 
-### Utilisation dans un module PrestaShop
+### Usage in a PrestaShop module
 
-1. Ajoutez la dépendance dans votre fichier `composer.json` de votre module :
+1. Add the dependency to your module's `composer.json` file:
 ```json
 {
     "require": {
@@ -33,65 +33,65 @@ SmartyComponents est conçu pour fonctionner parfaitement dans un module PrestaS
 }
 ```
 
-2. Dans votre fichier principal de module, initialisez le gestionnaire de composants avec la méthode factory :
+2. In your main module file, initialize the component manager with the factory method:
 
 ```php
-// Dans une méthode hook ou un controller
+// In a hook method or controller
 $smarty = $this->context->smarty;
 $componentManager = \SmartyComponents\Factory::createForPrestaShop($smarty, $this->name);
 
-// Enregistrez les composants que vous souhaitez utiliser
+// Register the components you want to use
 $componentManager->registerCardComponent();
 $componentManager->registerSlotComponent();
 $componentManager->register('button');
 $componentManager->register('alert');
 ```
 
-3. Créez les templates de composants dans le dossier `views/templates/components/` de votre module.
+3. Create component templates in the `views/templates/components/` folder of your module.
 
-4. Utilisez-les dans vos templates Smarty comme dans l'exemple ci-dessous.
+4. Use them in your Smarty templates as in the example below.
 
-## Utilisation du SmartyComponentManager
+## Using the SmartyComponentManager
 
-Le `SmartyComponentManager` vous permet d'enregistrer facilement des composants Smarty sans avoir à écrire beaucoup de code répétitif.
+The `SmartyComponentManager` allows you to easily register Smarty components without having to write a lot of repetitive code.
 
-### Initialisation
+### Initialization
 
 ```php
-// Instanciation de Smarty
+// Instantiating Smarty
 $smarty = new \Smarty();
 
-// Configuration de base de Smarty
+// Basic Smarty configuration
 // ...
 
-// Initialisation du gestionnaire de composants
+// Initializing the component manager
 $componentManager = new \SmartyComponents\SmartyComponentManager($smarty, 'components');
 
-// OU avec la Factory
+// OR with the Factory
 $componentManager = \SmartyComponents\Factory::create($smarty, 'components');
 
-// OU avec des composants préenregistrés
+// OR with pre-registered components
 $componentManager = \SmartyComponents\Factory::createWithCommonComponents($smarty);
 ```
 
-### Enregistrement d'un composant simple
+### Registering a simple component
 
-Pour enregistrer un composant simple, il suffit d'appeler la méthode `register` avec le nom du composant :
+To register a simple component, just call the `register` method with the component name:
 
 ```php
-// Enregistre un composant "alert" qui utilisera le template "components/alert.tpl"
+// Registers an "alert" component that will use the "components/alert.tpl" template
 $componentManager->register('alert');
 ```
 
-Le gestionnaire créera automatiquement un handler qui assignera les paramètres et le contenu au template et affichera le template correspondant.
+The manager will automatically create a handler that assigns parameters and content to the template and displays the corresponding template.
 
-### Enregistrement d'un composant avec un handler personnalisé
+### Registering a component with a custom handler
 
-Si vous avez besoin d'une logique personnalisée pour votre composant, vous pouvez fournir votre propre handler :
+If you need custom logic for your component, you can provide your own handler:
 
 ```php
 $componentManager->register('button', function($params, $content, $template, &$repeat) {
-    // Votre logique personnalisée ici
+    // Your custom logic here
     $template->assign('params', $params);
     $template->assign('content', $content);
     if (!$repeat && $content !== null) {
@@ -100,21 +100,21 @@ $componentManager->register('button', function($params, $content, $template, &$r
 });
 ```
 
-### Composants spéciaux
+### Special components
 
-Le gestionnaire inclut également des méthodes pour enregistrer des composants spéciaux comme `card` et `slot` qui ont une logique particulière :
+The manager also includes methods to register special components like `card` and `slot` that have particular logic:
 
 ```php
-// Enregistre le composant "card"
+// Register the "card" component
 $componentManager->registerCardComponent();
 
-// Enregistre le composant "slot"
+// Register the "slot" component
 $componentManager->registerSlotComponent();
 ```
 
-## Création de templates de composants avec Tailwind CSS v4
+## Creating component templates with Tailwind CSS v4
 
-Pour chaque composant, créez un fichier template dans le dossier `components/` (ou celui spécifié lors de l'initialisation) avec le nom du composant, par exemple `button.tpl` :
+For each component, create a template file in the `components/` folder (or the one specified during initialization) with the name of the component, for example `button.tpl`:
 
 ```smarty
 {* button.tpl *}
@@ -123,55 +123,55 @@ Pour chaque composant, créez un fichier template dans le dossier `components/` 
 </button>
 ```
 
-## Utilisation des composants dans vos templates
+## Using components in your templates
 
-Une fois enregistrés, vous pouvez utiliser vos composants dans vos templates Smarty :
+Once registered, you can use your components in your Smarty templates:
 
 ```smarty
-{button class="bg-green-500 hover:bg-green-600"}Cliquez ici{/button}
+{button class="bg-green-500 hover:bg-green-600"}Click here{/button}
 
 {alert type="warning"}
     <div class="flex items-center">
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
         </svg>
-        <span class="font-medium">Attention!</span> Ceci est un message d'alerte.
+        <span class="font-medium">Warning!</span> This is an alert message.
     </div>
 {/alert}
 
 {card}
-    {slot name="title"}<h3>Titre de la carte</h3>{/slot}
+    {slot name="title"}<h3>Card Title</h3>{/slot}
     {slot name="card_content"}
-        <p>Contenu de la carte</p>
+        <p>Card content</p>
     {/slot}
 {/card}
 ```
 
-## Intégration de Tailwind CSS v4
+## Integrating Tailwind CSS v4
 
-Pour utiliser Tailwind CSS v4 dans votre application, ajoutez simplement le script dans votre template principal :
+To use Tailwind CSS v4 in your application, simply add the script to your main template:
 
 ```html
 <head>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Autres scripts et styles -->
+    <!-- Other scripts and styles -->
 </head>
 ```
 
-Tous les composants sont déjà configurés pour utiliser Tailwind CSS v4, y compris le support du mode sombre avec les classes `dark:`.
+All components are already configured to use Tailwind CSS v4, including dark mode support with the `dark:` classes.
 
-## Personnalisation des composants
+## Customizing components
 
-Vous pouvez personnaliser n'importe quel composant en passant des classes supplémentaires via le paramètre `class` :
+You can customize any component by passing additional classes via the `class` parameter:
 
 ```smarty
-{button class="bg-purple-500 hover:bg-purple-600 w-full"}Bouton pleine largeur{/button}
+{button class="bg-purple-500 hover:bg-purple-600 w-full"}Full width button{/button}
 ```
 
-## Étendre le gestionnaire
+## Extending the manager
 
-Vous pouvez étendre la classe `SmartyComponentManager` pour ajouter vos propres méthodes pour des composants spécifiques à votre application ou module PrestaShop.
+You can extend the `SmartyComponentManager` class to add your own methods for components specific to your application or PrestaShop module.
 
-## Exemples
+## Examples
 
-Consultez le dossier `docs/example-module/` pour un exemple complet d'utilisation dans un module PrestaShop. 
+Check the `docs/example-module/` folder for a complete example of usage in a PrestaShop module. 
