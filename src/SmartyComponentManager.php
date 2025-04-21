@@ -72,9 +72,20 @@ class SmartyComponentManager
         else if (is_callable($handler)) {
             $originalHandler = $handler;
             $handler = function($params, $content, $template, &$repeat) use ($originalHandler) {
+                // Assign standard variables
+                $template->assign('params', $params);
+                $template->assign('content', $content);
+                
                 if (!$repeat && $content !== null) {
                     // Extract slots content
                     $slotsContent = $this->extractSlotsContent($content);
+                    
+                    // Assign props if provided
+                    $props = null;
+                    if(isset($params['props'])){
+                        $props = $params['props'];
+                    }
+                    $template->assign('props', $props);
                     
                     // Assign slot contents to Smarty variables
                     foreach ($slotsContent as $slotName => $slotContent) {
